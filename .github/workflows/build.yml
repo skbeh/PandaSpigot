@@ -27,8 +27,8 @@ jobs:
       - name: Apply patches
         run: ./panda patch
 
-      - name: Setup upterm session
-        uses: lhotari/action-upterm@v1
+      # - name: Setup upterm session
+      #   uses: lhotari/action-upterm@v1
 
       - name: Build
         uses: burrunan/gradle-cache-action@v1
