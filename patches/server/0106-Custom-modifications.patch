@@ -1,0 +1,186 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: skbeh <60107333+skbeh@users.noreply.github.com>
+Date: Mon, 3 Jul 2023 08:33:58 +0000
+Subject: [PATCH] Custom modifications
+
+
+diff --git a/src/main/java/com/hpfxd/pandaspigot/Metrics.java b/src/main/java/com/hpfxd/pandaspigot/Metrics.java
+index 9134394542f49f7c400a4a07b649048899694448..ee898fe1a86f2199f7d1ad8e33aaa93147fafa9b 100644
+--- a/src/main/java/com/hpfxd/pandaspigot/Metrics.java
++++ b/src/main/java/com/hpfxd/pandaspigot/Metrics.java
+@@ -136,8 +136,7 @@ public class Metrics {
+         /** The version of the Metrics class. */
+         public static final String METRICS_VERSION = "3.0.0";
+ 
+-        private static final ScheduledExecutorService scheduler =
+-            Executors.newScheduledThreadPool(1, task -> new Thread(task, "bStats-Metrics"));
++        private static final ScheduledExecutorService scheduler = null;
+ 
+         private static final String REPORT_URL = "https://bStats.org/api/v2/data/%s";
+ 
+diff --git a/src/main/java/net/minecraft/server/CommandFill.java b/src/main/java/net/minecraft/server/CommandFill.java
+index aab43b1222cde2fa0ecdac1f5f28f18a93a34d6a..87ca308afaa7fa3faa3183beff6e603b4f58d46a 100644
+--- a/src/main/java/net/minecraft/server/CommandFill.java
++++ b/src/main/java/net/minecraft/server/CommandFill.java
+@@ -40,7 +40,7 @@ public class CommandFill extends CommandAbstract {
+             BlockPosition blockposition3 = new BlockPosition(Math.max(blockposition.getX(), blockposition1.getX()), Math.max(blockposition.getY(), blockposition1.getY()), Math.max(blockposition.getZ(), blockposition1.getZ()));
+             int j = (blockposition3.getX() - blockposition2.getX() + 1) * (blockposition3.getY() - blockposition2.getY() + 1) * (blockposition3.getZ() - blockposition2.getZ() + 1);
+ 
+-            if (j > '\u8000') {
++            if (false) {
+                 throw new CommandException("commands.fill.tooManyBlocks", new Object[] { Integer.valueOf(j), Integer.valueOf('\u8000')});
+             } else if (blockposition2.getY() >= 0 && blockposition3.getY() < 256) {
+                 World world = icommandlistener.getWorld();
+diff --git a/src/main/java/net/minecraft/server/DedicatedServer.java b/src/main/java/net/minecraft/server/DedicatedServer.java
+index 2519d4ca1bb09d76caa2373164625aa6b692176e..f39218c373882d04db14c8743eabe64b5c70e0c8 100644
+--- a/src/main/java/net/minecraft/server/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/DedicatedServer.java
+@@ -44,6 +44,7 @@ public class DedicatedServer extends MinecraftServer implements IMinecraftServer
+         super(options, Proxy.NO_PROXY, DedicatedServer.a, serverThread);
+     // PandaSpigot end
+         // CraftBukkit end
++        if (true) return;
+         Thread thread = new Thread("Server Infinisleeper") {
+             {
+                 this.setDaemon(true);
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index db8f456952677d75e22034e4d32250ed5eccdf0d..a4eaebe89da2a1ff232bb45eccd2b140523bedce 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -62,7 +62,7 @@ public abstract class MinecraftServer extends com.hpfxd.pandaspigot.tickloop.Ree
+     private ServerConnection q; // Spigot
+     private final ServerPing r = new ServerPing();
+     private final Random s = new Random();
+-    private String serverIp;
++    private String serverIp = "127.0.0.1";
+     private int u = -1;
+     public WorldServer[] worldServer;
+     private PlayerList v;
+@@ -1209,7 +1209,7 @@ public abstract class MinecraftServer extends com.hpfxd.pandaspigot.tickloop.Ree
+     }
+ 
+     public String getServerModName() {
+-        return "PandaSpigot"; // PandaSpigot - PandaSpigot > // PaperSpigot - PaperSpigot > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
++        return "PaperSpigot"; // PandaSpigot - PandaSpigot > // PaperSpigot - PaperSpigot > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
+     }
+ 
+     public CrashReport b(CrashReport crashreport) {
+diff --git a/src/main/java/net/minecraft/server/MojangStatisticsGenerator.java b/src/main/java/net/minecraft/server/MojangStatisticsGenerator.java
+index 076306d9ea6c6246dd6ded8090aac2d224951b93..9624c012fc64cf7b471af7a69c845b66e04e651a 100644
+--- a/src/main/java/net/minecraft/server/MojangStatisticsGenerator.java
++++ b/src/main/java/net/minecraft/server/MojangStatisticsGenerator.java
+@@ -20,7 +20,7 @@ public class MojangStatisticsGenerator {
+     private final String c = UUID.randomUUID().toString();
+     private final URL d;
+     private final IMojangStatistics e;
+-    private final Timer f = new Timer("Snooper Timer", true);
++    private final Timer f = null;
+     private final Object g = new Object();
+     private final long h;
+     private boolean i;
+@@ -38,7 +38,7 @@ public class MojangStatisticsGenerator {
+     }
+ 
+     public void a() {
+-        if (!this.i) {
++        if (false) {
+             this.i = true;
+             this.h();
+             this.f.schedule(new TimerTask() {
+@@ -121,7 +121,6 @@ public class MojangStatisticsGenerator {
+     }
+ 
+     public void e() {
+-        this.f.cancel();
+     }
+ 
+     public long g() {
+diff --git a/src/main/java/net/minecraft/server/PlayerAbilities.java b/src/main/java/net/minecraft/server/PlayerAbilities.java
+index b04b9e6a77afd1fee0ea4de37f6c8e92369e9777..6bffc1292cbebef70cee5bd8f03383a937341958 100644
+--- a/src/main/java/net/minecraft/server/PlayerAbilities.java
++++ b/src/main/java/net/minecraft/server/PlayerAbilities.java
+@@ -7,6 +7,7 @@ public class PlayerAbilities {
+     public boolean canFly;
+     public boolean canInstantlyBuild;
+     public boolean mayBuild = true;
++    public boolean bypassFlightCheck = false;
+     public float flySpeed = 0.05F;
+     public float walkSpeed = 0.1F;
+ 
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+index e21ce6f8434a7eba8d1137f46e35493b4863736d..7fee982eb470b2afe90bbcdc877455c85f70b71c 100644
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -455,7 +455,9 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
+ 
+                     AxisAlignedBB axisalignedbb = this.player.getBoundingBox().grow((double) f4, (double) f4, (double) f4).a(0.0D, -0.55D, 0.0D);
+ 
+-                    if (!this.minecraftServer.getAllowFlight() && !this.player.abilities.canFly && !worldserver.c(axisalignedbb)) {
++                    if (!this.minecraftServer.getAllowFlight() && !this.player.abilities.canFly && !worldserver.c(axisalignedbb)
++                        && !this.player.abilities.bypassFlightCheck
++                    ) {
+                         if (d16 >= -0.03125D) {
+                             ++this.g;
+                             if (this.g > 80) {
+diff --git a/src/main/java/net/minecraft/server/PlayerList.java b/src/main/java/net/minecraft/server/PlayerList.java
+index ada9cf25b091c2df24301bb5e82d1f76fbd929e5..6e90cbaabe91cbd3c873be53f2449664df9d6940 100644
+--- a/src/main/java/net/minecraft/server/PlayerList.java
++++ b/src/main/java/net/minecraft/server/PlayerList.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.server;
+ 
++import com.google.common.collect.ImmutableSet;
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Maps;
+ import com.google.common.collect.Sets;
+@@ -14,6 +15,7 @@ import java.util.HashSet;
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
++import java.util.Set;
+ import java.util.UUID;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+@@ -67,6 +69,9 @@ public abstract class PlayerList {
+     private CraftServer cserver;
+     private final Map<String,EntityPlayer> playersByName = new org.spigotmc.CaseInsensitiveMap<EntityPlayer>();
+ 
++    private final boolean isLobbyServer;
++    private final Set<String> bypassFlightCheckWorlds = ImmutableSet.of("Hacker", "PlayGround", "Tunnel", "Water");
++
+     public PlayerList(MinecraftServer minecraftserver) {
+         this.cserver = minecraftserver.server = new CraftServer(minecraftserver, this);
+         minecraftserver.console = new com.hpfxd.pandaspigot.console.PandaConsoleCommandSender();
+@@ -81,6 +86,8 @@ public abstract class PlayerList {
+         this.k.a(false);
+         this.l.a(false);
+         this.maxPlayers = 8;
++
++        isLobbyServer = this.cserver.getServerName().equals("lobby");
+     }
+ 
+     public void a(NetworkManager networkmanager, EntityPlayer entityplayer) {
+@@ -645,6 +652,10 @@ public abstract class PlayerList {
+         // CraftBukkit start
+         // Don't fire on respawn
+         if (fromWorld != location.getWorld()) {
++            if (isLobbyServer) {
++                entityplayer.abilities.bypassFlightCheck = bypassFlightCheckWorlds.contains(location.getWorld().getName());
++            }
++
+             PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(entityplayer.getBukkitEntity(), fromWorld);
+             server.server.getPluginManager().callEvent(event);
+         }
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 3b9325010cd1bfce07cefe0b8514d33d39fd9136..587c7e5c199b3037ca461a24352d899678092857 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -127,7 +127,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
+ 
+ public final class CraftServer implements Server {
+     private static final Player[] EMPTY_PLAYER_ARRAY = new Player[0];
+-    private final String serverName = "PandaSpigot"; // PandaSpigot
++    private final String serverName = "CraftBukkit"; // PandaSpigot
+     private final String serverVersion;
+     private final String bukkitVersion = Versioning.getBukkitVersion();
+     private final Logger logger = Logger.getLogger("Minecraft");

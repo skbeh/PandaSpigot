@@ -1,0 +1,103 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: skbeh <60107333+skbeh@users.noreply.github.com>
+Date: Mon, 3 Jul 2023 12:01:12 +0000
+Subject: [PATCH] Update dependencies
+
+
+diff --git a/build.gradle.kts b/build.gradle.kts
+index 22a5fe9c59d1b2a8283e1ebb503c77b2be892fb5..a037a5149ddf3e50a91419c4f1efb952a82169c7 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -12,18 +12,18 @@ dependencies {
+     api("commons-lang:commons-lang:2.6")
+     api("org.avaje:ebean:2.8.1")
+     api("com.googlecode.json-simple:json-simple:1.1.1")
+-    api("org.yaml:snakeyaml:1.15")
++    api("org.yaml:snakeyaml:1.33")
+     api("net.md-5:bungeecord-chat:1.8-SNAPSHOT")
+     compileOnlyApi("net.sf.trove4j:trove4j:3.0.3") // provided by server
+ 
+     // bundled with Minecraft, should be kept in sync
+-    api("com.google.guava:guava:17.0")
+-    api("com.google.code.gson:gson:2.2.4")
+-    api("org.slf4j:slf4j-api:1.7.35") // PandaSpigot - Add SLF4J Logger
++    api("com.google.guava:guava:18.0")
++    api("com.google.code.gson:gson:2.10.1")
++    api("org.slf4j:slf4j-api:2.0.16") // PandaSpigot - Add SLF4J Logger
+ 
+     // testing
+-    testImplementation("junit:junit:4.12")
+-    testImplementation("org.hamcrest:hamcrest-library:1.3")
++    testImplementation("junit:junit:4.13.2")
++    testImplementation("org.hamcrest:hamcrest-library:2.2")
+     testImplementation("net.sf.trove4j:trove4j:3.0.3") // required by tests
+ }
+ 
+diff --git a/src/main/java/org/bukkit/configuration/file/YamlConstructor.java b/src/main/java/org/bukkit/configuration/file/YamlConstructor.java
+index 73ad722a82f3f5429a67585d426f7b023d1420ba..c4651e98a76640f1bebb2e77d2ebb361f2d889b5 100644
+--- a/src/main/java/org/bukkit/configuration/file/YamlConstructor.java
++++ b/src/main/java/org/bukkit/configuration/file/YamlConstructor.java
+@@ -3,6 +3,7 @@ package org.bukkit.configuration.file;
+ import java.util.LinkedHashMap;
+ import java.util.Map;
+ 
++import org.yaml.snakeyaml.LoaderOptions;
+ import org.yaml.snakeyaml.nodes.Node;
+ import org.yaml.snakeyaml.constructor.SafeConstructor;
+ import org.yaml.snakeyaml.error.YAMLException;
+@@ -13,6 +14,11 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
+ public class YamlConstructor extends SafeConstructor {
+ 
+     public YamlConstructor() {
++        this(new LoaderOptions());
++    }
++
++    public YamlConstructor(LoaderOptions loaderOptions) {
++        super(loaderOptions);
+         this.yamlConstructors.put(Tag.MAP, new ConstructCustomObject());
+     }
+ 
+diff --git a/src/main/java/org/bukkit/configuration/file/YamlRepresenter.java b/src/main/java/org/bukkit/configuration/file/YamlRepresenter.java
+index bc9c098d51d71e5c5b78c773826f13848f53439d..c8cb7d1e3579ecf43f385f0aa19750cf49b22c8d 100644
+--- a/src/main/java/org/bukkit/configuration/file/YamlRepresenter.java
++++ b/src/main/java/org/bukkit/configuration/file/YamlRepresenter.java
+@@ -7,12 +7,18 @@ import org.bukkit.configuration.ConfigurationSection;
+ import org.bukkit.configuration.serialization.ConfigurationSerializable;
+ import org.bukkit.configuration.serialization.ConfigurationSerialization;
+ 
++import org.yaml.snakeyaml.DumperOptions;
+ import org.yaml.snakeyaml.nodes.Node;
+ import org.yaml.snakeyaml.representer.Representer;
+ 
+ public class YamlRepresenter extends Representer {
+ 
+     public YamlRepresenter() {
++        this(new DumperOptions());
++    }
++
++    public YamlRepresenter(DumperOptions options) {
++        super(options);
+         this.multiRepresenters.put(ConfigurationSection.class, new RepresentConfigurationSection());
+         this.multiRepresenters.put(ConfigurationSerializable.class, new RepresentConfigurationSerializable());
+     }
+diff --git a/src/main/java/org/bukkit/plugin/PluginDescriptionFile.java b/src/main/java/org/bukkit/plugin/PluginDescriptionFile.java
+index c82928ef8f8a2d2877ce1f626778fb543bcf8a07..f48731c6b43a506a213a9a143be17e2bccb9e323 100644
+--- a/src/main/java/org/bukkit/plugin/PluginDescriptionFile.java
++++ b/src/main/java/org/bukkit/plugin/PluginDescriptionFile.java
+@@ -15,6 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
+ import org.bukkit.permissions.Permissible;
+ import org.bukkit.permissions.Permission;
+ import org.bukkit.permissions.PermissionDefault;
++import org.yaml.snakeyaml.LoaderOptions;
+ import org.yaml.snakeyaml.Yaml;
+ import org.yaml.snakeyaml.constructor.AbstractConstruct;
+ import org.yaml.snakeyaml.constructor.SafeConstructor;
+@@ -178,7 +179,7 @@ public final class PluginDescriptionFile {
+     private static final ThreadLocal<Yaml> YAML = new ThreadLocal<Yaml>() {
+         @Override
+         protected Yaml initialValue() {
+-            return new Yaml(new SafeConstructor() {
++            return new Yaml(new SafeConstructor(new LoaderOptions()) {
+                 {
+                     yamlConstructors.put(null, new AbstractConstruct() {
+                         @Override
